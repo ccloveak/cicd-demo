@@ -29,4 +29,18 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: ccloveak/cicd-demo-image:latest   
+          tags: ccloveak/cicd-demo-image:latest
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy in EC2
+        env:
+          PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY  }}       
+        run: |
+          echo "$PRIVATE_KEY" > private_key.pem && chmod 400 private_key.pem
+          ssh -o StrictHostKeyChecking=no -i "private_key.pem" ec2-user@52.194.167.121 '
+            docker container stop web && 
+            docker image pull ccloveak/cicd-demo-image:latest &&
+            docker container run --rm -d -p 80:80 --name web ccloveak/cicd-demo-image:latest
+          '
