@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('"ログイン"は表示しています', () => {
+test('"Sign In"は表示しています', () => {
   render(<App />);
-  expect(screen.getByText("ログイン")).toBeInTheDocument();
+  expect(screen.getByText("Sign In")).toBeInTheDocument();
 });
